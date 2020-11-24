@@ -1,0 +1,70 @@
+# Makefile for Linux and the GNU g++ compiler.
+
+# It does assume a Unix-like setup for some commands,
+# but if you only want to call "make" with the default target,
+# you should be OK.
+
+# If your compiler name is not given here, change it.
+CC		= g++
+
+CC_FLAGS	= -O3 -flto -fopenmp
+
+# These flags are not turned on by default, but DDS should pass them.
+# Turn them on below.
+WARN_FLAGS	= 		\
+	-Wsign-conversion 	\
+	-pedantic -Wall -Wextra  \
+	-Wcast-align -Wcast-qual \
+	-Wctor-dtor-privacy 	\
+	-Wdisabled-optimization \
+	-Winit-self 		\
+	-Wlogical-op		\
+	-Wmissing-include-dirs 	\
+	-Wnoexcept 		\
+	-Wold-style-cast 	\
+	-Woverloaded-virtual 	\
+	-Wredundant-decls 	\
+	-Wsign-promo 		\
+	-Wstrict-null-sentinel	\
+	-Wstrict-overflow=1 	\
+	-Wswitch-default -Wundef \
+	-Werror 		\
+	-Wno-unused 		\
+	-Wno-unknown-pragmas 	\
+	-Wno-long-long		\
+	-Wno-format
+
+# Here you can turn on warnings.
+# CC_FULL_FLAGS	= $(CC_FLAGS)
+CC_FULL_FLAGS	= $(CC_FLAGS) $(WARN_FLAGS)
+
+DLLBASE		= dds
+STATIC_LIB	= lib$(DLLBASE).a
+
+COMMON_SOURCE_FILES 	=	\
+	dds_40_Deck.cpp			
+
+ALL_EXAMPLE_FILES	=	\
+	dds_40.cpp		
+
+LIB_FLAGS	= -L. -l$(DLLBASE)
+
+LD_FLAGS	= 
+
+OBJ_FILES	= $(subst .cpp,.o,$(COMMON_SOURCE_FILES))
+EX_OBJ_FILES	= $(subst .cpp,.o,$(ALL_EXAMPLE_FILES))
+EX_EXE_FILES	= $(subst .cpp,,$(ALL_EXAMPLE_FILES))
+
+dds_40: $(OBJ_FILES) dds_40.o
+	$(CC) $(CC_FULL_FLAGS) $(LD_FLAGS) $(OBJ_FILES) dds_40.o $(LIB_FLAGS) -o dds_40
+
+
+%.o:	%.cpp
+	$(CC) $(CC_FULL_FLAGS) -c $< -o $*.o
+
+depend:
+	makedepend -Y -- $(cOMMON_SOURCE_FILES) $(ALL_EXAMPLE_FILES)
+
+clean:
+	rm -f $(OBJ_FILES) $(EX_OBJ_FILES) $(EX_EXE_FILES) $(STATIC_LIB)
+
