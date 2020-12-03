@@ -21,10 +21,10 @@ char getValue(int value);
 // my quicksort implementation for deck permutations, l - left, r - right
 void myQuickSort(int l, int r);
 
-// my quicksort implementations for values, l - left, r - right
+// my quicksort implementation for values, l - left, r - right
 void myValuesQuickSort(int l, int r);
 
-// my quicksort implementations for suit, l - left, r - right
+// my quicksort implementation for suit, l - left, r - right
 void mySuitQuickSort(int l, int r);
 
 // suit to integer
@@ -72,7 +72,7 @@ void showPBNString();
 
 
 
-// counts number of each suit of each player's cards, using "countPlayerPoints()" function
+// counts number of each suit of each player's cards, using "countSuit()" function
 void suitAmount();
 
 // returns: 4 - Ace, 3 - King, 2 - Queen, 1 - Jack, 0 - rest
@@ -90,5 +90,5 @@ void saveToCsvFile(std::string fileName);
 // adds headers to csv file
 void addHeadersToFile(std::string fileName);
 
-/// shows progress while making csv
+// shows progress while making csv
 void showProgress(int current, int step, std::string text);

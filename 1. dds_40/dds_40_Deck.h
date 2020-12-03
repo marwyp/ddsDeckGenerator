@@ -21,10 +21,10 @@ char getValue(int value);
 // my quicksort implementation for deck permutations, l - left, r - right
 void myQuickSort(int l, int r);
 
-// my quicksort implementations for values, l - left, r - right
+// my quicksort implementation for values, l - left, r - right
 void myValuesQuickSort(int l, int r);
 
-// my quicksort implementations for suit, l - left, r - right
+// my quicksort implementation for suit, l - left, r - right
 void mySuitQuickSort(int l, int r);
 
 // suit to integer
@@ -72,7 +72,7 @@ void showPBNString(int position);
 
 
 
-// counts number of each suit of each player's cards, using "countPlayerPoints()" function
+// counts number of each suit of each player's cards, using "countSuit()" function
 void suitAmount(int position);
 
 // returns: 4 - Ace, 3 - King, 2 - Queen, 1 - Jack, 0 - rest

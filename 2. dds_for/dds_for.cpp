@@ -8,8 +8,7 @@
 */
 
 
-// Test program for the CalcAllTablesPBN function.
-// Uses the hands pre-set in hands.cpp.
+// Test program based on example program with CalcAllTablesPBN function.
 
 #include <stdio.h>
 #include <stdlib.h>

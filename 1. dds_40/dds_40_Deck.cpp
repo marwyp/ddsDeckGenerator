@@ -17,7 +17,7 @@
 ////////////         variables and structures      /////////////
 ////////////////////////////////////////////////////////////////
 
-// amount
+// amount of decks to genearte, max: 40
 const int numberOfDecks = 40;
 
 // PBN string
@@ -68,8 +68,11 @@ struct game{
     playerStats south;
     playerStats west;
 };
+
+// information about each game
 game games[numberOfDecks];
 
+// contracts of one particular game
 myContractType north, east, south, west;
 
 
@@ -77,6 +80,7 @@ myContractType north, east, south, west;
 ///////////////////        functions      //////////////////////
 ////////////////////////////////////////////////////////////////
 
+// exchanges numbers 0 - 12 to card values
 char getValue(int value){
   switch(value){
     case 0:{
@@ -137,6 +141,7 @@ char getValue(int value){
   }
 }
 
+// my quicksort implementation for deck permutations, l - left, r - right
 void myQuickSort(int l, int r)  // l - left, r - right
 {
     int i, j;
@@ -165,6 +170,7 @@ void myQuickSort(int l, int r)  // l - left, r - right
     }
 }
 
+// suit to integer
 int suitNumber(char suit){
     switch (suit)
     {
@@ -191,6 +197,7 @@ int suitNumber(char suit){
     }
 }
 
+// value to integer
 int valueNumber(char value){
     switch (value)
     {
@@ -252,7 +259,9 @@ int valueNumber(char value){
     }
 }
 
-void myValuesQuickSort(int l, int r)  // l - left, r - right
+
+// my quicksort implementation for values, l - left, r - right
+void myValuesQuickSort(int l, int r)
 {
     int i, j; 
     card m;     // m - middle
@@ -280,7 +289,8 @@ void myValuesQuickSort(int l, int r)  // l - left, r - right
     }
 }
 
-void mySuitQuickSort(int l, int r)  // l - left, r - right
+// my quicksort implementation for suit, l - left, r - right
+void mySuitQuickSort(int l, int r)
 {
     int i, j; 
     card m;     // m - middle
@@ -308,6 +318,7 @@ void mySuitQuickSort(int l, int r)  // l - left, r - right
     }
 }
 
+// counts amount of each suit - range <left ; right>, result in suitTable
 void countSuit(int left, int right){
     for(int i = 0; i < 4; i++){
         suitTable[i] = 0;
@@ -328,13 +339,23 @@ void countSuit(int left, int right){
     }
 }
 
+// suit sort - Spades, Hearts, Diamonds, Clubs
 void suitSort(){
+
+    // north
     mySuitQuickSort(0, 12);
+
+    // east
     mySuitQuickSort(13, 25);
+
+    // south
     mySuitQuickSort(26, 38);
+
+    // west
     mySuitQuickSort(39, 51);
 }
 
+// shows deck - to check functions
 void showDeck(){
     for(int i = 0; i < 52; i++){
         if(i%13 == 0){
@@ -346,28 +367,36 @@ void showDeck(){
     }
 }
 
+// generate new deck to deck array
 void deckGenerate(){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0,1);
 
     for(int i = 0; i<13; i++){
+
+        // current value of card which will be added to each suit
         char currentValue = getValue(i);
+
+        // spades
         deck[i].suit = 'S';
         deck[i].value = currentValue;
         deck[i].random_number = dis(gen);
         //std::cout<< deck[i].random_number <<std::endl;
 
+        // hearts
         deck[i+13].suit = 'H';
         deck[i+13].value = currentValue;
         deck[i+13].random_number = dis(gen);
         //std::cout<< deck[i+13].random_number <<std::endl;
 
+        // diamonds
         deck[i+26].suit = 'D';
         deck[i+26].value = currentValue;
         deck[i+26].random_number = dis(gen);
         //std::cout<< deck[i+26].random_number <<std::endl;
 
+        // clubs
         deck[i+39].suit = 'C';
         deck[i+39].value = currentValue;
         deck[i+39].random_number = dis(gen);
@@ -375,6 +404,8 @@ void deckGenerate(){
     }
 }
 
+// adds first card of player to myPBN array
+// checks for the existence of suit, if it doesn't exist, adds dot
 void addFirstCard(){
     if(deck[deckPointer].suit == 'S'){
       *tablePointer = deck[deckPointer].value;
@@ -405,6 +436,7 @@ void addFirstCard(){
     }
 }
 
+// adds rest cards of player to myPBN array
 void addRestCards(){
     int thirteenPointer = 1;
     while(thirteenPointer != 13){
@@ -427,11 +459,13 @@ void addRestCards(){
     }
 }
 
+//adds space to myPBN array
 void addSpace(){
     *tablePointer = ' ';
     tablePointer++;
 }
 
+// adds dots if needed at the and of player cards to myPBN array
 void addLastDots(){
     int lastSuitNumber = suitNumber(deck[deckPointer - 1].suit);
     for(int i = 0; i < 4 - lastSuitNumber; i++){
@@ -440,29 +474,37 @@ void addLastDots(){
     }
 }
 
+// create myPBN char array, using addFirstCard(), addRestCards(), addSpace(), addLastDots() functions
 void createPBN(int position){
+  // sets deck pointer to 0
   deckPointer = 0;
+
+  // the begining of myPBN array
   myPBN[position][0] = 'N';
   myPBN[position][1] = ':';
   tablePointer = &myPBN[position][0];
   //std::cout << *tablePointer << std::endl;
   tablePointer+=2;
 
+  // adds cards of north player to myPBN array
   addFirstCard();
   addRestCards();
   addLastDots();
   addSpace();
 
+  // adds cards of east player to myPBN array
   addFirstCard();
   addRestCards();
   addLastDots();
   addSpace();
 
+  // adds cards of south player to myPBN array
   addFirstCard();
   addRestCards();
   addLastDots();
   addSpace();
 
+  // adds cards of west player to myPBN array
   addFirstCard();
   addRestCards();
   addLastDots();
@@ -479,25 +521,31 @@ void showPBNString(int position){
 ////////////////////////////////////////////////////////////////
 
 
+// counts number of each suit of each player's cards, using "countSuit()" function
 void suitAmount(int position){
+
+    // counts number of each suit in north cards
     countSuit(0, 12);
     games[position].north.spadesAmount = suitTable[0];
     games[position].north.heartsAmount = suitTable[1];
     games[position].north.diamondsAmount = suitTable[2];
     games[position].north.clubsAmount = suitTable[3];
 
+    // counts number of each suit in east cards
     countSuit(13, 25);
     games[position].east.spadesAmount = suitTable[0];
     games[position].east.heartsAmount = suitTable[1];
     games[position].east.diamondsAmount = suitTable[2];
     games[position].east.clubsAmount = suitTable[3];
 
+    // counts number of each suit in south cards
     countSuit(26, 38);
     games[position].south.spadesAmount = suitTable[0];
     games[position].south.heartsAmount = suitTable[1];
     games[position].south.diamondsAmount = suitTable[2];
     games[position].south.clubsAmount = suitTable[3];
 
+    // counts number of each suit in west cards
     countSuit(39, 51);
     games[position].west.spadesAmount = suitTable[0];
     games[position].west.heartsAmount = suitTable[1];
@@ -505,6 +553,7 @@ void suitAmount(int position){
     games[position].west.clubsAmount = suitTable[3];
 }
 
+// returns: 4 - Ace, 3 - King, 2 - Queen, 1 - Jack, 0 - rest
 int worthOfValue(int value){
     switch (value){
         case 'A':{
@@ -530,6 +579,7 @@ int worthOfValue(int value){
     }
 }
 
+// counts points of given player
 void countPlayerPoints(int left, int right, playerStats *player){
     int points = 0;
     for(int i = left; i <= right; i++){
@@ -538,6 +588,7 @@ void countPlayerPoints(int left, int right, playerStats *player){
     player -> points = points;
 }
 
+// counts points of each player
 void countPoints(int position){
     countPlayerPoints(0, 12, &(games[position].north));
     countPlayerPoints(13, 25, &(games[position].east));
@@ -545,6 +596,7 @@ void countPoints(int position){
     countPlayerPoints(39, 51, &(games[position].west));
 }
 
+// gets contracts to each player
 void getContracts(ddTableResults * table){
     north.noTrump = table->resTable[4][0];
     north.spades = table->resTable[0][0];
@@ -570,7 +622,7 @@ void getContracts(ddTableResults * table){
     west.diamonds = table->resTable[2][3];
     west.clubs = table->resTable[3][3];
 }
-
+// adds headers to csv file
 void addHeadersToFile(std::string fileName){
     std::ofstream file;
     file.open(fileName.c_str());
@@ -591,6 +643,7 @@ void addHeadersToFile(std::string fileName){
     file.close();
 }
 
+// saves result to csv file
 void saveToCsvFile(std::string fileName, int position){
     std::ofstream file;
     file.open(fileName.c_str(), std::ios::app);
