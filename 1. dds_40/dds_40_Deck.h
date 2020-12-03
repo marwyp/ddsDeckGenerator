@@ -1,3 +1,12 @@
+//============================================================================
+// Name        : dds_40_Deck.h
+// Author      : Marek Wypich
+// Version     : V1.0
+// License     : GNU GPL
+// Description : library for DDS Double Dummy Solver
+//============================================================================
+
+
 #pragma once
 #include <iostream>
 

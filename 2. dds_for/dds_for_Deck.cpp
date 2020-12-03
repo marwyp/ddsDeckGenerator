@@ -1,3 +1,13 @@
+//============================================================================
+// Name        : dds_for_Deck.cpp
+// Author      : Marek Wypich
+// Version     : V1.0
+// License     : GNU GPL
+// Description : library for DDS Double Dummy Solver
+//============================================================================
+
+
+
 #include <iostream>
 #include <random>
 #include <fstream>
