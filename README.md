@@ -9,7 +9,7 @@
 ### To compile code on Linux:
 * Make sure ddl.h and libdds.so are in directory
 * Use make or make dds_40/dds_for
-* Problem with compiling:
+* Problems with compiling:
 	* boost problems:
 		* Make sure you've installed boost/thread.hpp
 		* Use *sudo apt install libboost-thread-dev* if not
