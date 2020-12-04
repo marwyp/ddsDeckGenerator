@@ -1,6 +1,6 @@
 # ddsDeckGenerator
 
-###This is library for dds Double Dummy Solver
+### This is library for dds Double Dummy Solver
 * [DDS - GitHub](https://github.com/dds-bridge)
 * Make sure you don't violate its license [DDS - License](https://github.com/dds-bridge/dds/blob/develop/LICENSE)
 
