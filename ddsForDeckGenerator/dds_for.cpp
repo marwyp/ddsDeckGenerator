@@ -17,6 +17,7 @@
 #include "dll.h"
 #include "dds_for_Deck.h"
 
+// enum for cmd validation
 enum class validation{
   OK,
   INVALID_ARGUMENT,
@@ -24,19 +25,26 @@ enum class validation{
   NOT_ENAUGH_INFO
 };
 
+// var for cmd validation
 validation val;
+
+// variables for cmd progress validation
 int step;
 bool enable;
 std::string info;
 
 int main(int argc, char *argv[])
 {
+  // default values
   enable = false;
   val = validation::NOT_ENAUGH_INFO;
   int for_amount = 0;
   std::string fileName = "result.csv";
+
+  // cmd 
   std::vector<std::string> args(argv, argv + argc);
   for(size_t i = 0; i < args.size(); i++){
+    // -a - amount section
     if(args[i] == "-a"){
       if(i + 1 < args.size()){
         if(args[i + 1][0] != '-'){
@@ -52,13 +60,16 @@ int main(int argc, char *argv[])
           }   
         }
       }
+    // -n - csv file name section
     }else if(args[i] == "-n"){
       if(i + 1 < args.size()){
         if(args[i + 1][0] != '-'){
           fileName = args[i + 1];
         }
       }
+    // -p - progress section
     }else if(args[i] == "-p"){
+      // step
       if(i + 1 < args.size()){
         if(args[i + 1][0] != '-'){
           try{
@@ -67,18 +78,21 @@ int main(int argc, char *argv[])
               enable = true;
             }
           }catch(std::invalid_argument &error){
+            std::cout << "invalid argument: progress disabled" << std::endl;
             enable = false;
           }   
         }
       }
+      // info
       if(i + 2 < args.size()){
         if(args[i + 2][0] != '-'){
           info = args[i + 2];
-          std::cout << info << std::endl;
         }
       }
     }
   }
+
+  // main apk
   if(val == validation::OK){
     addHeadersToFile("wynik.csv");
 
@@ -134,14 +148,20 @@ int main(int argc, char *argv[])
         showProgress(number, step, info);
       }
     }
+
+  // options
   }else if(val == validation::NOT_ENAUGH_INFO){
     std::cout << "Options: " << std::endl;
     std::cout << "-a <amount>\t\t amount of games to generate, number > 0, obligatory" << std::endl;
     std::cout << "-n <name>\t\t name of destinantion file, optional - default: result.csv" << std::endl;
     std::cout << "-p <step> <info>\t shows progress in making csv file, optional - disabled by default";
     std::cout << ", step - obligatory, info - optional" << std::endl;
+  
+  // less than 1 error
   }else if(val == validation::LESS_THAN_1){
     std::cout << "amount of games to generate must be higher than 0" << std::endl;
+
+  // invalid argument error
   }else if(val == validation::INVALID_ARGUMENT){
     std::cout << "invalid argument in amount of games" << std::endl;
   }
