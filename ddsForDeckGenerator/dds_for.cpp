@@ -13,62 +13,138 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 #include "dll.h"
 #include "dds_for_Deck.h"
 
-int main()
+enum class validation{
+  OK,
+  INVALID_ARGUMENT,
+  LESS_THAN_1,
+  NOT_ENAUGH_INFO
+};
+
+validation val;
+int step;
+bool enable;
+std::string info;
+
+int main(int argc, char *argv[])
 {
-  addHeadersToFile("wynik.csv");
-
-  for(int number = 0; number < 10; number++){
-    extern char myPBN[1][80];
-    deckGenerate();       // new deck
-    myQuickSort(0, 51);   // deck permutation
-    suitSort();           // suit sort each player cards
-    createPBN();          // create myPBN char array
-    //showDeck();
-    //showPBNString();
-
-    suitAmount();
-    countPoints();
-
-    ddTableDealsPBN DDdealsPBN;
-    ddTablesRes tableRes;
-    allParResults pres;
-
-    int mode = 0; // No par calculation
-    int trumpFilter[DDS_STRAINS] = {0, 0, 0, 0, 0}; // All
-    int res;
-    char line[80];
-    bool match;
-
-#if defined(__linux) || defined(__APPLE__)
-  SetMaxThreads(0);
-#endif
-
-    DDdealsPBN.noOfTables = 1;
-
-    for (int handno = 0; handno < DDdealsPBN.noOfTables; handno++)
-    {
-      strcpy(DDdealsPBN.deals[handno].cards, myPBN[handno]);
+  enable = false;
+  val = validation::NOT_ENAUGH_INFO;
+  int for_amount = 0;
+  std::string fileName = "result.csv";
+  std::vector<std::string> args(argv, argv + argc);
+  for(size_t i = 0; i < args.size(); i++){
+    if(args[i] == "-a"){
+      if(i + 1 < args.size()){
+        if(args[i + 1][0] != '-'){
+          try{
+            for_amount = std::stoi(args[i + 1]);
+            if(for_amount > 0){
+              val = validation::OK;
+            }else{
+              val = validation::LESS_THAN_1;
+            }
+          }catch(std::invalid_argument &error){
+            val = validation::INVALID_ARGUMENT;
+          }   
+        }
+      }
+    }else if(args[i] == "-n"){
+      if(i + 1 < args.size()){
+        if(args[i + 1][0] != '-'){
+          fileName = args[i + 1];
+        }
+      }
+    }else if(args[i] == "-p"){
+      if(i + 1 < args.size()){
+        if(args[i + 1][0] != '-'){
+          try{
+            step = std::stoi(args[i + 1]);
+            if(step > 0){
+              enable = true;
+            }
+          }catch(std::invalid_argument &error){
+            enable = false;
+          }   
+        }
+      }
+      if(i + 2 < args.size()){
+        if(args[i + 2][0] != '-'){
+          info = args[i + 2];
+          std::cout << info << std::endl;
+        }
+      }
     }
-
-
-    res = CalcAllTablesPBN(&DDdealsPBN, mode, trumpFilter,
-                          &tableRes, &pres);
-
-    if (res != RETURN_NO_FAULT)
-    {
-      ErrorMessage(res, line);
-      printf("DDS error: %s\n", line);
-    }
-
-    for (int handno = 0; handno < DDdealsPBN.noOfTables; handno++)
-    {
-      getContracts(&tableRes.results[handno]);
-    }
-    saveToCsvFile("wynik.csv");
-    //showProgress(number, 10, "");
   }
+  if(val == validation::OK){
+    addHeadersToFile("wynik.csv");
+
+    for(int number = 0; number < for_amount; number++){
+      extern char myPBN[1][80];
+      deckGenerate();       // new deck
+      myQuickSort(0, 51);   // deck permutation
+      suitSort();           // suit sort each player cards
+      createPBN();          // create myPBN char array
+      //showDeck();
+      //showPBNString();
+
+      suitAmount();
+      countPoints();
+
+      ddTableDealsPBN DDdealsPBN;
+      ddTablesRes tableRes;
+      allParResults pres;
+
+      int mode = 0; // No par calculation
+      int trumpFilter[DDS_STRAINS] = {0, 0, 0, 0, 0}; // All
+      int res;
+      char line[80];
+      bool match;
+
+  #if defined(__linux) || defined(__APPLE__)
+    SetMaxThreads(0);
+  #endif
+
+      DDdealsPBN.noOfTables = 1;
+
+      for (int handno = 0; handno < DDdealsPBN.noOfTables; handno++)
+      {
+        strcpy(DDdealsPBN.deals[handno].cards, myPBN[handno]);
+      }
+
+
+      res = CalcAllTablesPBN(&DDdealsPBN, mode, trumpFilter,
+                            &tableRes, &pres);
+
+      if (res != RETURN_NO_FAULT)
+      {
+        ErrorMessage(res, line);
+        printf("DDS error: %s\n", line);
+      }
+
+      for (int handno = 0; handno < DDdealsPBN.noOfTables; handno++)
+      {
+        getContracts(&tableRes.results[handno]);
+      }
+      saveToCsvFile(fileName);
+      if(enable){
+        showProgress(number, step, info);
+      }
+    }
+  }else if(val == validation::NOT_ENAUGH_INFO){
+    std::cout << "Options: " << std::endl;
+    std::cout << "-a <amount>\t\t amount of games to generate, number > 0, obligatory" << std::endl;
+    std::cout << "-n <name>\t\t name of destinantion file, optional - default: result.csv" << std::endl;
+    std::cout << "-p <step> <info>\t shows progress in making csv file, optional - disabled by default";
+    std::cout << ", step - obligatory, info - optional" << std::endl;
+  }else if(val == validation::LESS_THAN_1){
+    std::cout << "amount of games to generate must be higher than 0" << std::endl;
+  }else if(val == validation::INVALID_ARGUMENT){
+    std::cout << "invalid argument in amount of games" << std::endl;
+  }
+  
 }
 
