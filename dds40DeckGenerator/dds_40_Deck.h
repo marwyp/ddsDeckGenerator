@@ -10,6 +10,26 @@
 #pragma once
 #include <iostream>
 
+// game struct
+
+// player information
+struct playerStats{
+    int spadesAmount;
+    int heartsAmount;
+    int diamondsAmount;
+    int clubsAmount;
+    int points;
+};
+
+// playerStats for each game
+struct game{
+    playerStats north;
+    playerStats east;
+    playerStats south;
+    playerStats west;
+};
+
+
 ////////////////////////////////////////////////////////////////
 ////////////////       myDeckGenerator      ////////////////////
 ////////////////////////////////////////////////////////////////
@@ -58,10 +78,10 @@ void addSpace();
 void addLastDots();
 
 // create myPBN char array, using addFirstCard(), addRestCards(), addSpace(), addLastDots() functions
-void createPBN(int position);
+void createPBN(long unsigned int position, char *myPBN[]);
 
 // shows myPBN array
-void showPBNString(int position);
+void showPBNString(long unsigned int position, char *myPBN[]);
 
 
 
@@ -73,19 +93,19 @@ void showPBNString(int position);
 
 
 // counts number of each suit of each player's cards, using "countSuit()" function
-void suitAmount(int position);
+void suitAmount(long unsigned int position, std::vector<game> games);
 
 // returns: 4 - Ace, 3 - King, 2 - Queen, 1 - Jack, 0 - rest
 int worthOfValue(int value);
 
 // counts points of each player
-void countPoints(int position);
+void countPoints(long unsigned int position, std::vector<game> games);
 
 // gets contracts to each player
 void getContracts(ddTableResults * table);
 
 // saves result to csv file
-void saveToCsvFile(std::string fileName, int position);
+void saveToCsvFile(std::string fileName, long unsigned int position, char *myPBN[], std::vector<game> games);
 
 // adds headers to csv file
 void addHeadersToFile(std::string fileName);

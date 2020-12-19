@@ -13,27 +13,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <vector>
 #include "dll.h"
 #include "dds_40_Deck.h"
 
 int main()
 {
-  const int  numberOfDecks = 40;
-  extern char myPBN[numberOfDecks][80];
+  long unsigned int numberOfDecks = 5;
+  // PBN string
+  char **myPBN = new char*[numberOfDecks];
+  for(long unsigned int i = 0; i < numberOfDecks; i++){
+    myPBN[i] = new char[80];
+  }
+
+  // default, empty game
+  game emptyGame;
+
+  // information about each game
+  std::vector<game> games(numberOfDecks, emptyGame);
 
   addHeadersToFile("wynik.csv");
 
-  for(int i = 0; i < numberOfDecks; i++){
+  for(long unsigned int i = 0; i < numberOfDecks; i++){
     deckGenerate();       // new deck
     myQuickSort(0, 51);   // deck permutation
     suitSort();           // suit sort each player cards
-    createPBN(i);          // create myPBN char array
+    createPBN(i, myPBN);          // create myPBN char array
     //showDeck();
-    //showPBNString(i);
+    //showPBNString(i, myPBN);
 
-    suitAmount(i);
-    countPoints(i);
+    suitAmount(i, games);
+    countPoints(i, games);
   }
   
   ddTableDealsPBN DDdealsPBN;
@@ -69,8 +79,11 @@ SetMaxThreads(0);
   for (int handno = 0; handno < DDdealsPBN.noOfTables; handno++)
   {
     getContracts(&tableRes.results[handno]);
-    saveToCsvFile("wynik.csv", handno);
+    saveToCsvFile("wynik.csv", static_cast<long unsigned int>(handno), myPBN, games);
   }
-  
+  for(long unsigned int i = 0; i < numberOfDecks; i++){
+    delete [] myPBN[i];
+  }
+  delete[] myPBN;
 }
 

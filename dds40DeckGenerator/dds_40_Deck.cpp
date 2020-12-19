@@ -10,18 +10,14 @@
 #include <iostream>
 #include <random>
 #include <fstream>
+#include <vector>
 #include "dll.h"
-
+#include "dds_40_Deck.h"
 
 ////////////////////////////////////////////////////////////////
 ////////////         variables and structures      /////////////
 ////////////////////////////////////////////////////////////////
 
-// amount of decks to genearte, max: 40
-const int numberOfDecks = 40;
-
-// PBN string
-char myPBN[numberOfDecks][80];
 
 // card structure
 struct card{
@@ -52,25 +48,7 @@ struct myContractType
     int clubs;
 };
 
-// player information
-struct playerStats{
-    int spadesAmount;
-    int heartsAmount;
-    int diamondsAmount;
-    int clubsAmount;
-    int points;
-};
 
-// playerStats for each game
-struct game{
-    playerStats north;
-    playerStats east;
-    playerStats south;
-    playerStats west;
-};
-
-// information about each game
-game games[numberOfDecks];
 
 // contracts of one particular game
 myContractType north, east, south, west;
@@ -475,7 +453,7 @@ void addLastDots(){
 }
 
 // create myPBN char array, using addFirstCard(), addRestCards(), addSpace(), addLastDots() functions
-void createPBN(int position){
+void createPBN(long unsigned int position, char *myPBN[]){
   // sets deck pointer to 0
   deckPointer = 0;
 
@@ -511,7 +489,7 @@ void createPBN(int position){
 
 }
 
-void showPBNString(int position){
+void showPBNString(long unsigned int position, char *myPBN[]){
     printf("%s\n", myPBN[position]);
 }
 
@@ -522,7 +500,7 @@ void showPBNString(int position){
 
 
 // counts number of each suit of each player's cards, using "countSuit()" function
-void suitAmount(int position){
+void suitAmount(long unsigned int position, std::vector<game> games){
 
     // counts number of each suit in north cards
     countSuit(0, 12);
@@ -589,7 +567,7 @@ void countPlayerPoints(int left, int right, playerStats *player){
 }
 
 // counts points of each player
-void countPoints(int position){
+void countPoints(long unsigned int position, std::vector<game> games){
     countPlayerPoints(0, 12, &(games[position].north));
     countPlayerPoints(13, 25, &(games[position].east));
     countPlayerPoints(26, 38, &(games[position].south));
@@ -644,7 +622,7 @@ void addHeadersToFile(std::string fileName){
 }
 
 // saves result to csv file
-void saveToCsvFile(std::string fileName, int position){
+void saveToCsvFile(std::string fileName, long unsigned int position, char *myPBN[], std::vector<game> games){
     std::ofstream file;
     file.open(fileName.c_str(), std::ios::app);
 
