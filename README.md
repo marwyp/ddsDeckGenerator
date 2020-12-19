@@ -80,3 +80,5 @@
 * *void addHeadersToFile(std::string fileName)*
 	* adds headers to csv file
 	* clears all lines in chosen file
+* *void showProgress(int current, int step, std::string text)* in deck_for
+	* shows progress while making csv
